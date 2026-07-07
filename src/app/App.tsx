@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppDataProvider } from './AppDataContext';
 import { useAppData } from './hooks';
 import { BottomTabNav } from '../components/layout/BottomTabNav';
@@ -47,10 +47,10 @@ function AppShell() {
 
 export function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AppDataProvider>
         <AppShell />
       </AppDataProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
