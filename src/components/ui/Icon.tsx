@@ -6,7 +6,10 @@ export type IconName =
   | 'settings'
   | 'check'
   | 'warning'
-  | 'chevronRight';
+  | 'chevronRight'
+  | 'chevronDown'
+  | 'rest'
+  | 'bell';
 
 interface IconProps {
   name: IconName;
@@ -51,6 +54,14 @@ const paths: Record<IconName, React.ReactNode> = {
     </>
   ),
   chevronRight: <path d="M9 6l6 6-6 6" />,
+  chevronDown: <path d="M6 9l6 6 6-6" />,
+  rest: <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" />,
+  bell: (
+    <>
+      <path d="M6 10a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z" />
+      <path d="M10 20a2 2 0 0 0 4 0" />
+    </>
+  ),
 };
 
 export function Icon({ name, className = 'w-5 h-5' }: IconProps) {

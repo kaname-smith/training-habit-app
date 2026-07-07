@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { WorkoutRecommendationCard } from '../../components/workout/WorkoutRecommendationCard';
 import { FatigueCheckCard } from '../../components/workout/FatigueCheckCard';
 import { ProteinProgressCard } from '../../components/nutrition/ProteinProgressCard';
+import { ReminderBanner } from '../../components/today/ReminderBanner';
 import { StatusBadge } from '../../components/ui/StatusBadge';
 import {
   useAppData,
@@ -29,7 +30,7 @@ const EFFORT_LABEL: Record<NonNullable<WorkoutLog['effort']>, string> = {
 
 export function TodayPage() {
   const navigate = useNavigate();
-  const { profile, workoutLogs, nutritionLogs, fatigueCheckIns, addWorkoutLog, upsertFatigueCheckIn } =
+  const { profile, workoutLogs, nutritionLogs, fatigueCheckIns, settings, addWorkoutLog, upsertFatigueCheckIn } =
     useAppData();
   const today = todayIsoDate();
 
@@ -93,19 +94,21 @@ export function TodayPage() {
 
   return (
     <PageContainer title={parseIsoDateAsLocal(today).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' })}>
+      <ReminderBanner
+        notificationsEnabled={settings.notificationsEnabled}
+        notificationTime={settings.notificationTime}
+        hasTodayLog={Boolean(todayLog)}
+      />
+
       {todayLog ? (
         <Card className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">今日はもう完了しました</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">今日はもう完了しました</p>
             <StatusBadge status={todayLog.workoutType === 'rest' ? 'rest' : todayLog.workoutType === 'short' ? 'short_done' : 'completed'} />
           </div>
-          <p className="text-sm text-neutral-600 dark:text-neutral-300">
-            {getCompletionMessage(todayLog.workoutType)}
-          </p>
+          <p className="text-sm text-[var(--text-secondary)]">{getCompletionMessage(todayLog.workoutType)}</p>
           {todayLog.effort && (
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              体感強度：{EFFORT_LABEL[todayLog.effort]}
-            </p>
+            <p className="text-xs text-[var(--text-muted)]">体感強度：{EFFORT_LABEL[todayLog.effort]}</p>
           )}
         </Card>
       ) : (
@@ -131,12 +134,12 @@ export function TodayPage() {
 
       <Card className="flex justify-around text-center">
         <div>
-          <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">{monthlyCount}</p>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">今月の実施回数</p>
+          <p className="text-2xl font-semibold text-[var(--text-primary)]">{monthlyCount}</p>
+          <p className="text-xs text-[var(--text-muted)]">今月の実施回数</p>
         </div>
         <div>
-          <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">{weeklyCount}</p>
-          <p className="text-xs text-neutral-500 dark:text-neutral-400">今週の実施回数</p>
+          <p className="text-2xl font-semibold text-[var(--text-primary)]">{weeklyCount}</p>
+          <p className="text-xs text-[var(--text-muted)]">今週の実施回数</p>
         </div>
       </Card>
     </PageContainer>
