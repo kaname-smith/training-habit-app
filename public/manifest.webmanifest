@@ -1,9 +1,11 @@
 {
+  "id": "/",
   "name": "StudyFit Primer",
   "short_name": "StudyFit",
   "description": "試験期間でも続けられる、自宅トレーニング習慣化アプリ",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f7f8f7",
   "theme_color": "#2f6355",
   "icons": [
