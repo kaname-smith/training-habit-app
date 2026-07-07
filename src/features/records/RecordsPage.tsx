@@ -1,0 +1,113 @@
+import { useMemo } from 'react';
+import { PageContainer } from '../../components/layout/PageContainer';
+import { Card } from '../../components/ui/Card';
+import { MonthlyCalendar, type CalendarDay } from '../../components/records/MonthlyCalendar';
+import { useAppData, todayIsoDate } from '../../app/hooks';
+import { getWeekRange, getWeeklyCompletedCount } from '../../domain/schedule';
+import type { WorkoutLog, WorkoutStatus } from '../../domain/workoutTypes';
+
+function statusForDate(dateIso: string, logs: WorkoutLog[], today: string): WorkoutStatus {
+  const log = logs.find((l) => l.date === dateIso && l.completedAt);
+  if (log) {
+    if (log.workoutType === 'rest') return 'rest';
+    if (log.workoutType === 'short') return 'short_done';
+    return 'completed';
+  }
+  return dateIso < today ? 'skipped' : 'planned';
+}
+
+export function RecordsPage() {
+  const { dailyPlans, workoutLogs } = useAppData();
+  const today = todayIsoDate();
+
+  const calendarDays: CalendarDay[] = useMemo(
+    () =>
+      dailyPlans.map((plan) => ({
+        date: plan.date,
+        dayOfMonth: Number(plan.date.slice(-2)),
+        status: statusForDate(plan.date, workoutLogs, today),
+      })),
+    [dailyPlans, workoutLogs, today],
+  );
+
+  const totalCompleted = workoutLogs.filter((log) => log.completedAt).length;
+
+  const weeklyTotals = useMemo(() => {
+    const seen = new Set<string>();
+    const totals: { label: string; count: number }[] = [];
+    for (const plan of dailyPlans) {
+      const range = getWeekRange(plan.date);
+      const key = `${range.start}_${range.end}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      totals.push({
+        label: `${range.start.slice(5)} 〜 ${range.end.slice(5)}`,
+        count: getWeeklyCompletedCount(workoutLogs, range.start, range.end),
+      });
+    }
+    return totals;
+  }, [dailyPlans, workoutLogs]);
+
+  const bestPlankSeconds = useMemo(() => {
+    let best = 0;
+    for (const log of workoutLogs) {
+      for (const exerciseLog of log.exerciseLogs) {
+        if (exerciseLog.exerciseId !== 'plank') continue;
+        for (const set of exerciseLog.completedSets) {
+          if (set.completed && set.seconds && set.seconds > best) best = set.seconds;
+        }
+      }
+    }
+    return best;
+  }, [workoutLogs]);
+
+  const bestPushUpReps = useMemo(() => {
+    let best = 0;
+    for (const log of workoutLogs) {
+      for (const exerciseLog of log.exerciseLogs) {
+        if (exerciseLog.exerciseId !== 'pushUp') continue;
+        for (const set of exerciseLog.completedSets) {
+          if (set.completed && set.reps && set.reps > best) best = set.reps;
+        }
+      }
+    }
+    return best;
+  }, [workoutLogs]);
+
+  return (
+    <PageContainer title="記録">
+      <MonthlyCalendar days={calendarDays} />
+
+      <Card className="text-center">
+        <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">{totalCompleted}</p>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">7月の総実施回数(休息含む)</p>
+      </Card>
+
+      <Card>
+        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">週ごとの実施数</p>
+        <div className="flex flex-col gap-1">
+          {weeklyTotals.map((week) => (
+            <div key={week.label} className="flex justify-between text-sm text-neutral-600 dark:text-neutral-300">
+              <span>{week.label}</span>
+              <span>{week.count}回</span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <Card>
+        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">種目別の記録</p>
+        <div className="flex justify-around text-center">
+          <div>
+            <p className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">{bestPlankSeconds}秒</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">プランク最長</p>
+          </div>
+          <div>
+            <p className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">{bestPushUpReps}回</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">腕立て最多</p>
+          </div>
+        </div>
+      </Card>
+    </PageContainer>
+  );
+}
