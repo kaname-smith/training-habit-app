@@ -1,9 +1,12 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { PageContainer } from '../../components/layout/PageContainer';
 import { Card } from '../../components/ui/Card';
+import { StatusBadge } from '../../components/ui/StatusBadge';
 import { MonthlyCalendar, type CalendarDay } from '../../components/records/MonthlyCalendar';
-import { useAppData, todayIsoDate } from '../../app/hooks';
+import { useAppData, todayIsoDate, parseIsoDateAsLocal } from '../../app/hooks';
 import { getWeekRange, getWeeklyCompletedCount } from '../../domain/schedule';
+import { workoutTemplates } from '../../data/seedWorkouts';
+import { EFFORT_LABEL, NO_RECORD_FOR_DAY_TEXT } from '../../content/messages';
 import type { WorkoutLog, WorkoutStatus } from '../../domain/workoutTypes';
 
 function statusForDate(dateIso: string, logs: WorkoutLog[], today: string): WorkoutStatus {
@@ -19,6 +22,7 @@ function statusForDate(dateIso: string, logs: WorkoutLog[], today: string): Work
 export function RecordsPage() {
   const { dailyPlans, workoutLogs } = useAppData();
   const today = todayIsoDate();
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const calendarDays: CalendarDay[] = useMemo(
     () =>
@@ -29,6 +33,11 @@ export function RecordsPage() {
       })),
     [dailyPlans, workoutLogs, today],
   );
+
+  const selectedPlan = selectedDate ? dailyPlans.find((plan) => plan.date === selectedDate) : undefined;
+  const selectedLog = selectedDate
+    ? workoutLogs.find((log) => log.date === selectedDate && log.completedAt)
+    : undefined;
 
   const totalCompleted = workoutLogs.filter((log) => log.completedAt).length;
 
@@ -76,18 +85,45 @@ export function RecordsPage() {
 
   return (
     <PageContainer title="記録">
-      <MonthlyCalendar days={calendarDays} />
+      <MonthlyCalendar
+        days={calendarDays}
+        selectedDate={selectedDate}
+        onSelectDay={(day) => setSelectedDate(day.date === selectedDate ? null : day.date)}
+      />
+
+      {selectedPlan && (
+        <Card className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-medium text-[var(--text-primary)]">
+              {parseIsoDateAsLocal(selectedPlan.date).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })}
+            </p>
+            <StatusBadge status={statusForDate(selectedPlan.date, workoutLogs, today)} />
+          </div>
+          {selectedLog ? (
+            <>
+              <p className="text-sm text-[var(--text-secondary)]">
+                実施内容：{workoutTemplates[selectedLog.workoutType]?.title ?? selectedLog.workoutType}
+              </p>
+              {selectedLog.effort && (
+                <p className="text-xs text-[var(--text-muted)]">体感強度：{EFFORT_LABEL[selectedLog.effort]}</p>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-[var(--text-muted)]">{NO_RECORD_FOR_DAY_TEXT}</p>
+          )}
+        </Card>
+      )}
 
       <Card className="text-center">
-        <p className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">{totalCompleted}</p>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400">7月の総実施回数(休息含む)</p>
+        <p className="text-2xl font-semibold text-[var(--text-primary)]">{totalCompleted}</p>
+        <p className="text-xs text-[var(--text-muted)]">7月の総実施回数(休息含む)</p>
       </Card>
 
       <Card>
-        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">週ごとの実施数</p>
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-2">週ごとの実施数</p>
         <div className="flex flex-col gap-1">
           {weeklyTotals.map((week) => (
-            <div key={week.label} className="flex justify-between text-sm text-neutral-600 dark:text-neutral-300">
+            <div key={week.label} className="flex justify-between text-sm text-[var(--text-secondary)]">
               <span>{week.label}</span>
               <span>{week.count}回</span>
             </div>
@@ -96,15 +132,15 @@ export function RecordsPage() {
       </Card>
 
       <Card>
-        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">種目別の記録</p>
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-2">種目別の記録</p>
         <div className="flex justify-around text-center">
           <div>
-            <p className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">{bestPlankSeconds}秒</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">プランク最長</p>
+            <p className="text-xl font-semibold text-[var(--text-primary)]">{bestPlankSeconds}秒</p>
+            <p className="text-xs text-[var(--text-muted)]">プランク最長</p>
           </div>
           <div>
-            <p className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">{bestPushUpReps}回</p>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">腕立て最多</p>
+            <p className="text-xl font-semibold text-[var(--text-primary)]">{bestPushUpReps}回</p>
+            <p className="text-xs text-[var(--text-muted)]">腕立て最多</p>
           </div>
         </div>
       </Card>

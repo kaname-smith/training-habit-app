@@ -35,6 +35,14 @@ describe('getCompletionMessage', () => {
   });
 });
 
+describe('EFFORT_LABEL', () => {
+  it.each(Object.entries(messages.EFFORT_LABEL))('%s has no banned words', (_effort, label) => {
+    for (const banned of BANNED_WORDS) {
+      expect(label).not.toContain(banned);
+    }
+  });
+});
+
 describe('getMonthlyAchievementLine', () => {
   it.each([0, 1, 2, 5, 20])('count=%i has no banned words', (count) => {
     const text = messages.getMonthlyAchievementLine(count);

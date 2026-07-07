@@ -18,15 +18,7 @@ import {
 import { getWeekRange, getWeeklyCompletedCount } from '../../domain/schedule';
 import { JULY_PLAN_START_DATE, JULY_PLAN_END_DATE } from '../../data/julyPlan';
 import { workoutTemplates } from '../../data/seedWorkouts';
-import { getCompletionMessage } from '../../content/messages';
-import type { WorkoutLog } from '../../domain/workoutTypes';
-
-const EFFORT_LABEL: Record<NonNullable<WorkoutLog['effort']>, string> = {
-  easy: '軽い',
-  good: 'ちょうどよい',
-  hard: 'きつい',
-  too_hard: 'きつすぎた',
-};
+import { getCompletionMessage, EFFORT_LABEL } from '../../content/messages';
 
 export function TodayPage() {
   const navigate = useNavigate();

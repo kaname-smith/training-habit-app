@@ -17,18 +17,15 @@ export function ProteinProgressCard({ bodyWeightKg, proteinPerShakeG, log }: Pro
 
   return (
     <Card>
-      <p className="text-xs text-neutral-500 dark:text-neutral-400">今日のタンパク質</p>
-      <p className="mt-1 text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+      <p className="text-xs text-[var(--text-muted)]">今日のタンパク質</p>
+      <p className="mt-1 text-2xl font-semibold text-[var(--text-primary)]">
         {Math.round(total)}g
-        <span className="ml-1 text-sm font-normal text-neutral-500 dark:text-neutral-400">
+        <span className="ml-1 text-sm font-normal text-[var(--text-muted)]">
           / 目標 {Math.round(target.minG)}〜{Math.round(target.maxG)}g
         </span>
       </p>
-      <div className="mt-2 h-2 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
-        <div
-          className="h-full rounded-full bg-brand-500"
-          style={{ width: `${progressRatio * 100}%` }}
-        />
+      <div className="mt-2 h-2 rounded-full bg-[var(--border-color)] overflow-hidden">
+        <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${progressRatio * 100}%` }} />
       </div>
     </Card>
   );

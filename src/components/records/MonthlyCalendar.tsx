@@ -1,4 +1,6 @@
 import { Card } from '../ui/Card';
+import { StatusBadge } from '../ui/StatusBadge';
+import { CALENDAR_LEGEND_HINT } from '../../content/messages';
 import type { WorkoutStatus } from '../../domain/workoutTypes';
 import { getUtcWeekday } from '../../domain/schedule';
 
@@ -22,6 +24,8 @@ const STATUS_GLYPH: Record<WorkoutStatus, string> = {
   rescheduled: '↻',
 };
 
+const LEGEND_STATUSES: WorkoutStatus[] = ['completed', 'short_done', 'rest', 'skipped'];
+
 export interface CalendarDay {
   date: string;
   dayOfMonth: number;
@@ -30,6 +34,8 @@ export interface CalendarDay {
 
 interface MonthlyCalendarProps {
   days: CalendarDay[];
+  selectedDate?: string | null;
+  onSelectDay?: (day: CalendarDay) => void;
 }
 
 // Monday-first weekday index (0=Mon..6=Sun) derived from the JS Sunday-first getUtcWeekday.
@@ -38,13 +44,20 @@ function toMondayFirstIndex(dateIso: string): number {
   return sundayFirst === 0 ? 6 : sundayFirst - 1;
 }
 
-export function MonthlyCalendar({ days }: MonthlyCalendarProps) {
+export function MonthlyCalendar({ days, selectedDate, onSelectDay }: MonthlyCalendarProps) {
   const leadingBlankCount = days.length > 0 ? toMondayFirstIndex(days[0].date) : 0;
   const leadingBlanks = Array.from({ length: leadingBlankCount });
 
   return (
     <Card>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-neutral-400 dark:text-neutral-500 mb-1">
+      <div className="flex flex-wrap gap-1.5 mb-3">
+        {LEGEND_STATUSES.map((status) => (
+          <StatusBadge key={status} status={status} />
+        ))}
+      </div>
+      <p className="text-xs text-[var(--text-muted)] mb-3">{CALENDAR_LEGEND_HINT}</p>
+
+      <div className="grid grid-cols-7 gap-1 text-center text-xs text-[var(--text-muted)] mb-1">
         {WEEKDAY_LABELS.map((label) => (
           <span key={label}>{label}</span>
         ))}
@@ -54,9 +67,14 @@ export function MonthlyCalendar({ days }: MonthlyCalendarProps) {
           <div key={`blank-${i}`} />
         ))}
         {days.map((day) => (
-          <div
+          <button
             key={day.date}
-            className="flex flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-xs text-neutral-700 dark:text-neutral-200"
+            type="button"
+            onClick={() => onSelectDay?.(day)}
+            aria-pressed={selectedDate === day.date}
+            className={`flex flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-xs text-[var(--text-secondary)] ${
+              selectedDate === day.date ? 'ring-2 ring-[var(--accent)]' : ''
+            }`}
           >
             <span>{day.dayOfMonth}</span>
             <span
@@ -65,7 +83,7 @@ export function MonthlyCalendar({ days }: MonthlyCalendarProps) {
             >
               {STATUS_GLYPH[day.status]}
             </span>
-          </div>
+          </button>
         ))}
       </div>
     </Card>
