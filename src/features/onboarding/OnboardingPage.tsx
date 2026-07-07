@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { SafetyNotice } from '../../components/ui/SafetyNotice';
 import { JULY_PLAN_END_DATE } from '../../data/julyPlan';
+import { ONBOARDING_INTRO, EXAM_MODE_HELPER_TEXT } from '../../content/messages';
 import type { ExperienceLevel, UserProfile } from '../../domain/habitTypes';
 
 const EXPERIENCE_OPTIONS: { value: ExperienceLevel; label: string }[] = [
@@ -52,9 +53,7 @@ export function OnboardingPage() {
   return (
     <div className="mx-auto max-w-md min-h-screen px-4 py-8">
       <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">StudyFit Primer</h1>
-      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-        7月は助走で十分です。試験勉強を壊さず、8月に向けて身体を起こしましょう。
-      </p>
+      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">{ONBOARDING_INTRO}</p>
 
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <Card>
@@ -118,9 +117,7 @@ export function OnboardingPage() {
               className="h-5 w-5"
             />
           </label>
-          <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-            ONの間は、10分版や休息を積極的に提案します。
-          </p>
+          <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">{EXAM_MODE_HELPER_TEXT}</p>
         </Card>
 
         <Card>

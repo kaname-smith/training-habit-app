@@ -7,6 +7,7 @@ import { SafetyNotice } from '../../components/ui/SafetyNotice';
 import { ExercisePlayerCard } from '../../components/workout/ExercisePlayerCard';
 import { useAppData, todayIsoDate } from '../../app/hooks';
 import { workoutTemplates, exercises } from '../../data/seedWorkouts';
+import { getCompletionMessage, WORKOUT_NEXT_STEP_HINT } from '../../content/messages';
 import type { WorkoutType, PerceivedEffort, ExerciseLog } from '../../domain/workoutTypes';
 
 const EFFORT_OPTIONS: { value: PerceivedEffort; label: string }[] = [
@@ -102,9 +103,7 @@ export function WorkoutPlayer({ workoutType }: WorkoutPlayerProps) {
       <PageContainer title="完了">
         <Card className="flex flex-col gap-2">
           <p className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">お疲れさまでした</p>
-          <p className="text-sm text-neutral-600 dark:text-neutral-300">
-            今日はこれで十分です。試験月の目的は、途切れさせないことです。
-          </p>
+          <p className="text-sm text-neutral-600 dark:text-neutral-300">{getCompletionMessage(workoutType)}</p>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
             実施内容：{template.title}
           </p>
@@ -128,9 +127,7 @@ export function WorkoutPlayer({ workoutType }: WorkoutPlayerProps) {
           </Card>
         ) : (
           <Card className="flex flex-col gap-3">
-            <p className="text-sm text-neutral-600 dark:text-neutral-300">
-              次回はA/Bを交互に、無理のない範囲で続けましょう。
-            </p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-300">{WORKOUT_NEXT_STEP_HINT}</p>
             <Button variant="primary" fullWidth onClick={() => navigate('/nutrition')}>
               プロテインを記録する
             </Button>

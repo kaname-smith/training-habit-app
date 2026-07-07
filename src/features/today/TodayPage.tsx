@@ -17,6 +17,7 @@ import {
 import { getWeekRange, getWeeklyCompletedCount } from '../../domain/schedule';
 import { JULY_PLAN_START_DATE, JULY_PLAN_END_DATE } from '../../data/julyPlan';
 import { workoutTemplates } from '../../data/seedWorkouts';
+import { getCompletionMessage } from '../../content/messages';
 import type { WorkoutLog } from '../../domain/workoutTypes';
 
 const EFFORT_LABEL: Record<NonNullable<WorkoutLog['effort']>, string> = {
@@ -99,9 +100,7 @@ export function TodayPage() {
             <StatusBadge status={todayLog.workoutType === 'rest' ? 'rest' : todayLog.workoutType === 'short' ? 'short_done' : 'completed'} />
           </div>
           <p className="text-sm text-neutral-600 dark:text-neutral-300">
-            {todayLog.workoutType === 'rest'
-              ? '休息も計画の一部です。明日戻れば大丈夫です。'
-              : '今日はこれで十分です。試験月の目的は、途切れさせないことです。'}
+            {getCompletionMessage(todayLog.workoutType)}
           </p>
           {todayLog.effort && (
             <p className="text-xs text-neutral-500 dark:text-neutral-400">

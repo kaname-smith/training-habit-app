@@ -6,6 +6,7 @@ import { SafetyNotice } from '../../components/ui/SafetyNotice';
 import { useAppData } from '../../app/hooks';
 import { exportAllData } from '../../storage/repositories';
 import type { NotificationTime } from '../../storage/repositories';
+import { AUGUST_PREVIEW_TITLE, AUGUST_PREVIEW_BODY, RESET_CONFIRM_TEXT } from '../../content/messages';
 
 const NOTIFICATION_TIME_OPTIONS: { value: NotificationTime; label: string }[] = [
   { value: 'morning', label: '朝' },
@@ -120,10 +121,8 @@ export function SettingsPage() {
       </Card>
 
       <Card>
-        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-1">8月以降について</p>
-        <p className="text-sm text-neutral-600 dark:text-neutral-300">
-          7月の助走が十分にできると、8月から本格強化モードを解放できます。今は途切れさせないことを優先しましょう。
-        </p>
+        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-1">{AUGUST_PREVIEW_TITLE}</p>
+        <p className="text-sm text-neutral-600 dark:text-neutral-300">{AUGUST_PREVIEW_BODY}</p>
       </Card>
 
       <Card>
@@ -139,9 +138,7 @@ export function SettingsPage() {
           </Button>
         ) : (
           <>
-            <p className="text-sm text-red-600 dark:text-red-400">
-              本当にすべての記録を削除しますか？この操作は元に戻せません。
-            </p>
+            <p className="text-sm text-red-600 dark:text-red-400">{RESET_CONFIRM_TEXT}</p>
             <div className="flex gap-2">
               <Button variant="secondary" fullWidth onClick={() => setConfirmingReset(false)}>
                 キャンセル

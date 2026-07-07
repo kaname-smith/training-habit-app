@@ -4,6 +4,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { ProteinProgressCard } from '../../components/nutrition/ProteinProgressCard';
 import { useAppData, todayIsoDate } from '../../app/hooks';
+import { NUTRITION_EXPLAINER_TITLE, NUTRITION_EXPLAINER_BODY } from '../../content/messages';
 
 const SHAKE_OPTIONS = [0, 1, 2];
 
@@ -80,10 +81,8 @@ export function NutritionPage() {
       </Card>
 
       <Card>
-        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-1">体重別の目標について</p>
-        <p className="text-sm text-neutral-600 dark:text-neutral-300">
-          7月の目安は体重×1.4〜1.6gです。一般的な運動者の参考範囲は体重×1.4〜2.0g/日とされています。プロテインは食事の代替ではなく、不足分を埋める道具として使いましょう。
-        </p>
+        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-1">{NUTRITION_EXPLAINER_TITLE}</p>
+        <p className="text-sm text-neutral-600 dark:text-neutral-300">{NUTRITION_EXPLAINER_BODY}</p>
       </Card>
     </PageContainer>
   );
