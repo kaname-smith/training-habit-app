@@ -22,16 +22,42 @@
   }
 }
 
+/*
+ * Semantic design tokens. Values are the same neutral/brand shades already
+ * used ad hoc across components (Phase 1) — this only gives them names so
+ * shared UI can reference one token instead of a light/dark utility pair.
+ */
+:root {
+  --surface: var(--color-white);
+  --surface-alt: #f7f8f7;
+  --text-primary: var(--color-neutral-900);
+  --text-secondary: var(--color-neutral-600);
+  --text-muted: var(--color-neutral-500);
+  --border-color: var(--color-neutral-200);
+  --accent: var(--color-brand-600);
+  --accent-surface: var(--color-brand-50);
+  --accent-contrast: var(--color-white);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: var(--color-neutral-900);
+    --surface-alt: #101513;
+    --text-primary: var(--color-neutral-50);
+    --text-secondary: var(--color-neutral-300);
+    --text-muted: var(--color-neutral-400);
+    --border-color: var(--color-neutral-800);
+    --accent: var(--color-brand-300);
+    --accent-surface: color-mix(in oklch, var(--color-brand-900) 40%, transparent);
+    --accent-contrast: var(--color-neutral-900);
+  }
+}
+
 html, body, #root {
   height: 100%;
 }
 
 body {
-  background-color: #f7f8f7;
-  color: #1c2624;
-}
-
-:root.dark body {
-  background-color: #101513;
-  color: #e7ede9;
+  background-color: var(--surface-alt);
+  color: var(--text-primary);
 }

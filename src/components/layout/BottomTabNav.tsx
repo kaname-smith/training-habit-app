@@ -12,7 +12,7 @@ const TABS: { to: string; label: string; icon: IconName }[] = [
 export function BottomTabNav() {
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-10 border-t border-neutral-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-950/95 backdrop-blur pb-[env(safe-area-inset-bottom)]"
+      className="fixed bottom-0 inset-x-0 z-10 border-t border-[var(--border-color)] bg-[var(--surface)]/95 backdrop-blur pb-[env(safe-area-inset-bottom)]"
       aria-label="主要ナビゲーション"
     >
       <ul className="flex justify-around">
@@ -23,9 +23,7 @@ export function BottomTabNav() {
               end={tab.to === '/'}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-1 py-2 text-xs ${
-                  isActive
-                    ? 'text-brand-600 dark:text-brand-300'
-                    : 'text-neutral-500 dark:text-neutral-400'
+                  isActive ? 'text-[var(--accent)]' : 'text-[var(--text-muted)]'
                 }`
               }
             >
