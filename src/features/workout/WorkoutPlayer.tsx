@@ -1,20 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageContainer } from '../../components/layout/PageContainer';
-import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { SafetyNotice } from '../../components/ui/SafetyNotice';
+import { StepDots } from '../../components/ui/StepDots';
 import { ExercisePlayerCard } from '../../components/workout/ExercisePlayerCard';
+import { WorkoutCompleteView } from './WorkoutCompleteView';
 import { useAppData, todayIsoDate } from '../../app/hooks';
 import { workoutTemplates, exercises } from '../../data/seedWorkouts';
-import { getCompletionMessage, WORKOUT_NEXT_STEP_HINT } from '../../content/messages';
+import { JULY_PLAN_START_DATE, JULY_PLAN_END_DATE } from '../../data/julyPlan';
 import type { WorkoutType, PerceivedEffort, ExerciseLog } from '../../domain/workoutTypes';
-
-const EFFORT_OPTIONS: { value: PerceivedEffort; label: string }[] = [
-  { value: 'easy', label: '軽い' },
-  { value: 'good', label: 'ちょうどよい' },
-  { value: 'hard', label: 'きつい' },
-];
 
 interface WorkoutPlayerProps {
   workoutType: WorkoutType;
@@ -22,7 +17,7 @@ interface WorkoutPlayerProps {
 
 export function WorkoutPlayer({ workoutType }: WorkoutPlayerProps) {
   const navigate = useNavigate();
-  const { addWorkoutLog } = useAppData();
+  const { workoutLogs, addWorkoutLog } = useAppData();
   const template = workoutTemplates[workoutType];
 
   const [exerciseIndex, setExerciseIndex] = useState(0);
@@ -43,6 +38,17 @@ export function WorkoutPlayer({ workoutType }: WorkoutPlayerProps) {
     setSavedLogId(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workoutType]);
+
+  // By the time savedLogId is set, addWorkoutLog has already updated the
+  // shared workoutLogs state (its setter runs before the repository write is
+  // awaited), so the just-finished session is already reflected here.
+  const monthlyCount = useMemo(
+    () =>
+      workoutLogs.filter(
+        (log) => log.completedAt && log.date >= JULY_PLAN_START_DATE && log.date <= JULY_PLAN_END_DATE,
+      ).length,
+    [workoutLogs],
+  );
 
   function toggleSet(exIndex: number, setIndex: number) {
     setSetsDone((prev) =>
@@ -100,43 +106,16 @@ export function WorkoutPlayer({ workoutType }: WorkoutPlayerProps) {
 
   if (phase === 'complete') {
     return (
-      <PageContainer title="完了">
-        <Card className="flex flex-col gap-2">
-          <p className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">お疲れさまでした</p>
-          <p className="text-sm text-neutral-600 dark:text-neutral-300">{getCompletionMessage(workoutType)}</p>
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            実施内容：{template.title}
-          </p>
-        </Card>
-
-        {!savedLogId ? (
-          <Card className="flex flex-col gap-3">
-            <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">体感強度はどうでしたか</p>
-            <div className="flex gap-2">
-              {EFFORT_OPTIONS.map((option) => (
-                <Button
-                  key={option.value}
-                  variant={effort === option.value ? 'primary' : 'secondary'}
-                  className="flex-1"
-                  onClick={() => handleFinish(option.value)}
-                >
-                  {option.label}
-                </Button>
-              ))}
-            </div>
-          </Card>
-        ) : (
-          <Card className="flex flex-col gap-3">
-            <p className="text-sm text-neutral-600 dark:text-neutral-300">{WORKOUT_NEXT_STEP_HINT}</p>
-            <Button variant="primary" fullWidth onClick={() => navigate('/nutrition')}>
-              プロテインを記録する
-            </Button>
-            <Button variant="ghost" fullWidth onClick={() => navigate('/')}>
-              今日の画面に戻る
-            </Button>
-          </Card>
-        )}
-      </PageContainer>
+      <WorkoutCompleteView
+        workoutType={workoutType}
+        templateTitle={template.title}
+        monthlyCount={monthlyCount}
+        effort={effort}
+        savedLogId={savedLogId}
+        onFinish={handleFinish}
+        onGoToNutrition={() => navigate('/nutrition')}
+        onGoHome={() => navigate('/')}
+      />
     );
   }
 
@@ -145,6 +124,8 @@ export function WorkoutPlayer({ workoutType }: WorkoutPlayerProps) {
 
   return (
     <PageContainer title={template.title}>
+      <StepDots total={template.exercises.length} currentIndex={exerciseIndex} />
+
       <SafetyNotice compact />
 
       <ExercisePlayerCard
@@ -155,17 +136,19 @@ export function WorkoutPlayer({ workoutType }: WorkoutPlayerProps) {
         stepLabel={`種目 ${exerciseIndex + 1} / ${template.exercises.length}`}
       />
 
-      <Button variant="primary" fullWidth onClick={goNext}>
-        {exerciseIndex + 1 >= template.exercises.length ? '終了する' : '次の種目へ'}
-      </Button>
+      <div className="sticky bottom-16 flex flex-col gap-2 bg-[var(--surface-alt)]/95 backdrop-blur pt-2 pb-1 -mx-4 px-4">
+        <Button variant="primary" fullWidth onClick={goNext}>
+          {exerciseIndex + 1 >= template.exercises.length ? '終了する' : '次の種目へ'}
+        </Button>
 
-      <div className="flex gap-2">
-        <Button variant="secondary" fullWidth onClick={handleSwitchToShort} disabled={workoutType === 'short'}>
-          軽量版へ変更
-        </Button>
-        <Button variant="secondary" fullWidth onClick={handleAbortToRest}>
-          中止して休息記録
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" fullWidth onClick={handleSwitchToShort} disabled={workoutType === 'short'}>
+            軽量版へ変更
+          </Button>
+          <Button variant="secondary" fullWidth onClick={handleAbortToRest}>
+            中止して休息記録
+          </Button>
+        </div>
       </div>
     </PageContainer>
   );
