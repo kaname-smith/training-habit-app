@@ -55,3 +55,6 @@ Thumbs.db
 
 # original kit archive (contents already extracted into the repo)
 training_habit_app_claude_kit.zip
+
+# real user data exported from the app — never commit actual records
+studyfit-export*.json
