@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import type { UserProfile, FatigueCheckIn } from '../domain/habitTypes';
 import type { DailyPlan, WorkoutLog } from '../domain/workoutTypes';
 import type { NutritionLog } from '../domain/nutritionTypes';
-import type { AppSettings } from '../storage/repositories';
+import type { AppSettings, DataImportResult } from '../storage/repositories';
 
 export interface AppDataContextValue {
   loading: boolean;
@@ -19,6 +19,7 @@ export interface AppDataContextValue {
   settings: AppSettings;
   updateSettings: (settings: AppSettings) => Promise<void>;
   resetAll: () => Promise<void>;
+  importAll: (raw: unknown) => Promise<DataImportResult>;
 }
 
 export const AppDataContext = createContext<AppDataContextValue | null>(null);

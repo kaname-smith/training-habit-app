@@ -8,7 +8,9 @@ import {
   fatigueCheckInsRepository,
   settingsRepository,
   resetAllData,
+  importAllData,
   type AppSettings,
+  type DataImportResult,
 } from '../storage/repositories';
 import { generateJulyPlan } from '../data/julyPlan';
 import type { UserProfile, FatigueCheckIn } from '../domain/habitTypes';
@@ -109,6 +111,23 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     setSettings({ notificationsEnabled: false, notificationTime: 'evening' });
   }
 
+  async function importAll(raw: unknown): Promise<DataImportResult> {
+    const result = await importAllData(raw);
+    if (!result.ok) return result;
+
+    const [loadedProfile, loadedLogs, loadedNutrition, loadedFatigue] = await Promise.all([
+      userProfileRepository.get(),
+      workoutLogsRepository.get(),
+      nutritionLogsRepository.get(),
+      fatigueCheckInsRepository.get(),
+    ]);
+    setProfile(loadedProfile);
+    setWorkoutLogs(loadedLogs);
+    setNutritionLogs(loadedNutrition);
+    setFatigueCheckIns(loadedFatigue);
+    return result;
+  }
+
   const value: AppDataContextValue = {
     loading,
     profile,
@@ -124,6 +143,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     settings,
     updateSettings,
     resetAll,
+    importAll,
   };
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;

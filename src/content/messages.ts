@@ -57,3 +57,11 @@ export const EFFORT_LABEL: Record<PerceivedEffort, string> = {
 };
 
 export const NO_RECORD_FOR_DAY_TEXT = 'この日はまだ記録がありません。';
+
+export const IMPORT_EXPORT_FIRST_HINT =
+  '読み込むと、現在の記録は選択したファイルの内容で上書きされます。念のため、先に「データを書き出す」で現在の記録をバックアップしておくことをおすすめします。';
+
+export const IMPORT_OVERWRITE_CONFIRM_TEXT =
+  '現在のデータを、選択したファイルの内容で上書きします。よろしいですか？';
+
+export const IMPORT_INVALID_FILE_TEXT = 'JSONファイルを読み込めませんでした。ファイルの形式を確認してください。';
