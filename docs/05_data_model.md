@@ -92,14 +92,19 @@ export interface NutritionLog {
   manualProteinG?: number;
 }
 
+export type SleepLevel = 'enough' | 'low' | 'very_low';
+export type FatigueLevel = 'light' | 'normal' | 'heavy';
+
 export interface FatigueCheckIn {
   date: string;
-  sleepHours?: number;
-  fatigueLevel: 1 | 2 | 3 | 4 | 5;
-  examTomorrow?: boolean;
-  recommendationOverride?: WorkoutType;
+  sleepLevel: SleepLevel;
+  fatigueLevel: FatigueLevel;
+  examTomorrow: boolean;
+  hasPainOrSickness: boolean;
 }
 ```
+
+`FatigueCheckIn` は `docs/07_habit_logic.md` §3/§4 の判定ロジックと `docs/03_ui_ux_spec.md` の3択UI(睡眠・疲労・明日試験)にそのまま対応するカテゴリ型を採用している。数値ベースの初期案(`sleepHours`, `fatigueLevel: 1-5`)は実装しておらず、以後は本ドキュメントもPhase 2実装(`src/domain/habitTypes.ts`)に合わせて更新する。`recommendationOverride` は、既存の「実行」タブからのメニュー手動選択(`/workout`)で同等の機能をすでに提供しているため型から削除した。
 
 ## 3. 保存キー案
 
