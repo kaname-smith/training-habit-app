@@ -1,0 +1,51 @@
+# dependencies
+node_modules/
+
+# build outputs
+dist/
+dist-ssr/
+build/
+coverage/
+.coverage/
+
+# local overrides
+*.local
+
+# env
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Claude local notes
+CLAUDE.local.md
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Windows zone identifiers
+*Zone.Identifier
+
+# original kit archive (contents already extracted into the repo)
+training_habit_app_claude_kit.zip

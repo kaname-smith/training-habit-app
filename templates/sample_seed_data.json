@@ -1,0 +1,43 @@
+{
+  "appName": "StudyFit Primer",
+  "programStartDate": "2026-07-07",
+  "programEndDate": "2026-07-31",
+  "protein": {
+    "julyTargetGPerKgMin": 1.4,
+    "julyTargetGPerKgMax": 1.6,
+    "generalReferenceGPerKgMax": 2.0,
+    "defaultProteinPerShakeG": 20
+  },
+  "workoutTemplates": [
+    {
+      "id": "intro",
+      "type": "intro",
+      "title": "7/7 導入10分",
+      "estimatedMinutes": 10
+    },
+    {
+      "id": "workout-a",
+      "type": "A",
+      "title": "筋トレA：下半身・胸・背中・体幹",
+      "estimatedMinutes": 25
+    },
+    {
+      "id": "workout-b",
+      "type": "B",
+      "title": "筋トレB：脚・肩・背中・腹筋",
+      "estimatedMinutes": 25
+    },
+    {
+      "id": "short-10",
+      "type": "short",
+      "title": "10分版：試験日前でもOK",
+      "estimatedMinutes": 10
+    },
+    {
+      "id": "rest",
+      "type": "rest",
+      "title": "休息：計画の一部",
+      "estimatedMinutes": 0
+    }
+  ]
+}

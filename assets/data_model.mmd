@@ -1,0 +1,8 @@
+erDiagram
+  UserProfile ||--o{ WorkoutLog : owns
+  UserProfile ||--o{ NutritionLog : owns
+  UserProfile ||--o{ FatigueCheckIn : owns
+  WorkoutTemplate ||--o{ ExerciseDefinition : contains
+  WorkoutLog ||--o{ ExerciseLog : contains
+  ExerciseLog ||--o{ SetLog : contains
+  DailyPlan ||--o| WorkoutLog : may_create
