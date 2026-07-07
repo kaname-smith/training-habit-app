@@ -3,6 +3,7 @@ import { PageContainer } from '../../components/layout/PageContainer';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { SafetyNotice } from '../../components/ui/SafetyNotice';
+import { SettingsSection } from '../../components/settings/SettingsSection';
 import { useAppData } from '../../app/hooks';
 import { exportAllData } from '../../storage/repositories';
 import type { NotificationTime } from '../../storage/repositories';
@@ -13,6 +14,9 @@ const NOTIFICATION_TIME_OPTIONS: { value: NotificationTime; label: string }[] = 
   { value: 'evening', label: '夕方' },
   { value: 'night', label: '夜' },
 ];
+
+const inputClassName =
+  'rounded-lg border border-[var(--border-color)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--text-primary)]';
 
 export function SettingsPage() {
   const { profile, saveProfile, settings, updateSettings, resetAll } = useAppData();
@@ -57,34 +61,30 @@ export function SettingsPage() {
 
   return (
     <PageContainer title="設定">
-      <Card>
-        <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700 dark:text-neutral-200">
+      <SettingsSection title="プロフィール">
+        <label className="flex flex-col gap-1 text-sm font-medium text-[var(--text-primary)]">
           体重(kg)
           <input
             type="number"
             inputMode="decimal"
             defaultValue={profile.bodyWeightKg}
             onBlur={(e) => handleWeightChange(e.target.value)}
-            className="rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-base"
+            className={inputClassName}
           />
         </label>
-      </Card>
 
-      <Card>
-        <label className="flex flex-col gap-1 text-sm font-medium text-neutral-700 dark:text-neutral-200">
+        <label className="flex flex-col gap-1 text-sm font-medium text-[var(--text-primary)]">
           プロテイン1杯量(g)
           <input
             type="number"
             inputMode="numeric"
             defaultValue={profile.proteinPerShakeG}
             onBlur={(e) => handleProteinPerShakeChange(e.target.value)}
-            className="rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 text-base"
+            className={inputClassName}
           />
         </label>
-      </Card>
 
-      <Card>
-        <label className="flex items-center justify-between text-sm font-medium text-neutral-700 dark:text-neutral-200">
+        <label className="flex items-center justify-between text-sm font-medium text-[var(--text-primary)]">
           試験モード
           <input
             type="checkbox"
@@ -93,23 +93,25 @@ export function SettingsPage() {
             className="h-5 w-5"
           />
         </label>
-      </Card>
+      </SettingsSection>
 
-      <Card>
-        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-2">通知のおすすめ時刻</p>
-        <div className="flex gap-2">
-          {NOTIFICATION_TIME_OPTIONS.map((option) => (
-            <Button
-              key={option.value}
-              variant={settings.notificationTime === option.value ? 'primary' : 'secondary'}
-              className="flex-1"
-              onClick={() => updateSettings({ ...settings, notificationTime: option.value })}
-            >
-              {option.label}
-            </Button>
-          ))}
+      <SettingsSection title="通知">
+        <div>
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-2">通知のおすすめ時刻</p>
+          <div className="flex gap-2">
+            {NOTIFICATION_TIME_OPTIONS.map((option) => (
+              <Button
+                key={option.value}
+                variant={settings.notificationTime === option.value ? 'primary' : 'secondary'}
+                className="flex-1"
+                onClick={() => updateSettings({ ...settings, notificationTime: option.value })}
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
         </div>
-        <label className="mt-3 flex items-center justify-between text-sm text-neutral-700 dark:text-neutral-200">
+        <label className="flex items-center justify-between text-sm font-medium text-[var(--text-primary)]">
           通知を表示する
           <input
             type="checkbox"
@@ -118,26 +120,19 @@ export function SettingsPage() {
             className="h-5 w-5"
           />
         </label>
-      </Card>
+      </SettingsSection>
 
-      <Card>
-        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-1">{AUGUST_PREVIEW_TITLE}</p>
-        <p className="text-sm text-neutral-600 dark:text-neutral-300">{AUGUST_PREVIEW_BODY}</p>
-      </Card>
-
-      <Card>
+      <SettingsSection title="データ">
         <Button variant="secondary" fullWidth onClick={handleExport}>
           データを書き出す(JSON)
         </Button>
-      </Card>
 
-      <Card className="flex flex-col gap-2">
         {!confirmingReset ? (
           <Button variant="ghost" fullWidth onClick={() => setConfirmingReset(true)}>
             データをリセットする
           </Button>
         ) : (
-          <>
+          <div className="flex flex-col gap-2">
             <p className="text-sm text-red-600 dark:text-red-400">{RESET_CONFIRM_TEXT}</p>
             <div className="flex gap-2">
               <Button variant="secondary" fullWidth onClick={() => setConfirmingReset(false)}>
@@ -147,8 +142,13 @@ export function SettingsPage() {
                 削除する
               </Button>
             </div>
-          </>
+          </div>
         )}
+      </SettingsSection>
+
+      <Card>
+        <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{AUGUST_PREVIEW_TITLE}</p>
+        <p className="text-sm text-[var(--text-secondary)]">{AUGUST_PREVIEW_BODY}</p>
       </Card>
 
       <SafetyNotice />
