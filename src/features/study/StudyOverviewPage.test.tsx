@@ -36,7 +36,7 @@ describe('StudyOverviewPage', () => {
     await waitFor(() => expect(screen.getByText('登録済みの科目: 1件')).toBeInTheDocument());
   });
 
-  it('links to Courses, Exams, Materials, and Discovery Tasks', async () => {
+  it('links to all five S1 modules', async () => {
     renderStudyOverview();
     await waitFor(() => expect(screen.getByText('登録済みの科目: 0件')).toBeInTheDocument());
 
@@ -44,13 +44,7 @@ describe('StudyOverviewPage', () => {
     expect(screen.getByRole('link', { name: /試験情報/ })).toHaveAttribute('href', '/study/exams');
     expect(screen.getByRole('link', { name: /教材/ })).toHaveAttribute('href', '/study/materials');
     expect(screen.getByRole('link', { name: /Discovery Tasks/ })).toHaveAttribute('href', '/study/discovery');
-  });
-
-  it('shows Availability as not-yet-available (no link)', async () => {
-    renderStudyOverview();
-    await waitFor(() => expect(screen.getByText('登録済みの科目: 0件')).toBeInTheDocument());
-
-    expect(screen.getByText('固定予定')).toBeInTheDocument();
-    expect(screen.getAllByRole('link')).toHaveLength(4);
+    expect(screen.getByRole('link', { name: /固定予定/ })).toHaveAttribute('href', '/study/availability');
+    expect(screen.getAllByRole('link')).toHaveLength(5);
   });
 });
