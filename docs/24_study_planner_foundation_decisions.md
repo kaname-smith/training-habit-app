@@ -228,3 +228,9 @@ Phase 0実装時のレビューで、`MaterialItem.status`に`'not_applicable'`(
 - `complete` / `not_applicable`: Discovery Task対象外(解消済み扱い)
 
 `not_applicable`が無いと、過去問等が実際に存在しない科目でDiscovery Taskが永久に残るため。`AvailabilityBlock`は展開済みの単発時間帯のみを表し、S1では繰り返しルールを導入しない(§7参照)。
+
+## 14. importは全置換であること(2026-07-11追記、Phase 1確定)
+
+`importAllData`はBody系・Study系を問わず常に「全置換」である。Studyフィールドを持たない旧export(Study Planner登場前のexport)をimportすると、Study系データは(旧exportに存在しないため)空配列に上書きされる。Body系データが復元されればStudy系データが消えても構わないという前提であり、部分import(Bodyのみ/Studyのみを選んで復元する機能)は現時点では実装しない。
+
+Study UIが実装されStudyデータが実運用で蓄積される段階(Phase 4以降)で必要性が確認できた場合にのみ、部分importの追加を検討する。
