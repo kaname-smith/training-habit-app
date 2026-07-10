@@ -3,9 +3,9 @@ import { Icon, type IconName } from '../ui/Icon';
 
 const TABS: { to: string; label: string; icon: IconName }[] = [
   { to: '/', label: '今日', icon: 'today' },
-  { to: '/workout', label: '実行', icon: 'workout' },
+  { to: '/body', label: 'Body', icon: 'body' },
+  { to: '/study', label: 'Study', icon: 'study' },
   { to: '/records', label: '記録', icon: 'records' },
-  { to: '/nutrition', label: '栄養', icon: 'nutrition' },
   { to: '/settings', label: '設定', icon: 'settings' },
 ];
 

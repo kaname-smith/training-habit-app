@@ -65,3 +65,13 @@ export const IMPORT_OVERWRITE_CONFIRM_TEXT =
   '現在のデータを、選択したファイルの内容で上書きします。よろしいですか？';
 
 export const IMPORT_INVALID_FILE_TEXT = 'JSONファイルを読み込めませんでした。ファイルの形式を確認してください。';
+
+export const BODY_HUB_WORKOUT_TITLE = 'トレーニング';
+export const BODY_HUB_WORKOUT_SUBTITLE = '今日のメニューを実行する';
+export const BODY_HUB_NUTRITION_TITLE = '栄養・プロテイン';
+export const BODY_HUB_NUTRITION_SUBTITLE = 'タンパク質の記録と目標を確認する';
+
+export const STUDY_OVERVIEW_INTRO =
+  '試験日・範囲・資料が分からないままでも大丈夫です。まずは何が分かっていないかを整理するところから始めます。';
+export const STUDY_OVERVIEW_STATUS_PREPARING =
+  '科目・試験・教材・不明点を整理する機能は準備中です。';

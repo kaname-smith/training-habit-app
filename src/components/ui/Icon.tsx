@@ -1,5 +1,7 @@
 export type IconName =
   | 'today'
+  | 'body'
+  | 'study'
   | 'workout'
   | 'records'
   | 'nutrition'
@@ -21,6 +23,18 @@ const paths: Record<IconName, React.ReactNode> = {
     <>
       <rect x="3" y="5" width="18" height="16" rx="2" />
       <path d="M3 10h18M8 3v4M16 3v4" />
+    </>
+  ),
+  body: (
+    <>
+      <circle cx="12" cy="5" r="3" />
+      <path d="M6 21v-2a6 6 0 0 1 12 0v2" />
+    </>
+  ),
+  study: (
+    <>
+      <path d="M4 5c3-1.5 6-1.5 8 0v14c-2-1.5-5-1.5-8 0V5Z" />
+      <path d="M20 5c-3-1.5-6-1.5-8 0v14c2-1.5 5-1.5 8 0V5Z" />
     </>
   ),
   workout: (
