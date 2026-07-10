@@ -41,8 +41,8 @@ function ComingSoonCard({ title, subtitle }: { title: string; subtitle: string }
 }
 
 // Study Overview hub: verifies StudyDataProvider mounts correctly on this
-// route, and links into the S1 modules implemented so far. Discovery Tasks
-// and Availability are shown as not-yet-available (Phase 4-B/4-C).
+// route, and links into the S1 modules implemented so far. Availability is
+// shown as not-yet-available (Phase 4-C).
 export function StudyOverviewPage() {
   const { loading, courses } = useStudyData();
 
@@ -60,7 +60,7 @@ export function StudyOverviewPage() {
       <NavCard to="/study/courses" title={STUDY_COURSES_TITLE} subtitle={STUDY_COURSES_SUBTITLE} />
       <NavCard to="/study/exams" title={STUDY_EXAMS_TITLE} subtitle={STUDY_EXAMS_SUBTITLE} />
       <NavCard to="/study/materials" title={STUDY_MATERIALS_TITLE} subtitle={STUDY_MATERIALS_SUBTITLE} />
-      <ComingSoonCard title={STUDY_DISCOVERY_TITLE} subtitle={STUDY_DISCOVERY_SUBTITLE} />
+      <NavCard to="/study/discovery" title={STUDY_DISCOVERY_TITLE} subtitle={STUDY_DISCOVERY_SUBTITLE} />
       <ComingSoonCard title={STUDY_AVAILABILITY_TITLE} subtitle={STUDY_AVAILABILITY_SUBTITLE} />
     </PageContainer>
   );

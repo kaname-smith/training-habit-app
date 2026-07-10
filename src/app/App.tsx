@@ -14,6 +14,7 @@ import { StudyOverviewPage } from '../features/study/StudyOverviewPage';
 import { CoursesPage } from '../features/study/CoursesPage';
 import { ExamsPage } from '../features/study/ExamsPage';
 import { MaterialsPage } from '../features/study/MaterialsPage';
+import { DiscoveryTasksPage } from '../features/study/DiscoveryTasksPage';
 
 function AppShell() {
   const { loading, profile } = useAppData();
@@ -51,6 +52,7 @@ function AppShell() {
                 <Route path="courses" element={<CoursesPage />} />
                 <Route path="exams" element={<ExamsPage />} />
                 <Route path="materials" element={<MaterialsPage />} />
+                <Route path="discovery" element={<DiscoveryTasksPage />} />
               </Routes>
             </StudyDataProvider>
           }
