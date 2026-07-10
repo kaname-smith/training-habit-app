@@ -11,6 +11,9 @@ import { NutritionPage } from '../features/nutrition/NutritionPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { StudyDataProvider } from '../features/study/context/StudyDataContext';
 import { StudyOverviewPage } from '../features/study/StudyOverviewPage';
+import { CoursesPage } from '../features/study/CoursesPage';
+import { ExamsPage } from '../features/study/ExamsPage';
+import { MaterialsPage } from '../features/study/MaterialsPage';
 
 function AppShell() {
   const { loading, profile } = useAppData();
@@ -40,10 +43,15 @@ function AppShell() {
         <Route path="/workout" element={<WorkoutPage />} />
         <Route path="/workout/:workoutType" element={<WorkoutPage />} />
         <Route
-          path="/study"
+          path="/study/*"
           element={
             <StudyDataProvider>
-              <StudyOverviewPage />
+              <Routes>
+                <Route path="/" element={<StudyOverviewPage />} />
+                <Route path="courses" element={<CoursesPage />} />
+                <Route path="exams" element={<ExamsPage />} />
+                <Route path="materials" element={<MaterialsPage />} />
+              </Routes>
             </StudyDataProvider>
           }
         />
