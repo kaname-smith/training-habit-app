@@ -234,3 +234,14 @@ Phase 0実装時のレビューで、`MaterialItem.status`に`'not_applicable'`(
 `importAllData`はBody系・Study系を問わず常に「全置換」である。Studyフィールドを持たない旧export(Study Planner登場前のexport)をimportすると、Study系データは(旧exportに存在しないため)空配列に上書きされる。Body系データが復元されればStudy系データが消えても構わないという前提であり、部分import(Bodyのみ/Studyのみを選んで復元する機能)は現時点では実装しない。
 
 Study UIが実装されStudyデータが実運用で蓄積される段階(Phase 4以降)で必要性が確認できた場合にのみ、部分importの追加を検討する。
+
+## 15. Phase 4完了時点の追加事項(2026-07-11追記)
+
+Study Planner S1の5モジュール(Courses / Exams / Materials / Discovery Tasks / Availability)の実装が完了した(`feature/study-planner-foundation`ブランチ)。main統合前レビューにあたり、以下を記録する。
+
+- **AvailabilityBlockは確定どおり単発ブロックのまま実装した。** 繰り返しルール(`recurrenceRule`等)はS1では持たせていない。毎週の予定はその都度1件ずつ登録する運用とし、AvailabilityPage上にその旨を表示している。
+- **`datetime-local`のネイティブ値をそのまま`start`/`end`に保存している**(例:`"2026-07-13T10:00"`)。タイムゾーン情報を持たないローカル時刻文字列であり、秒精度もない。Phase 0/1のテストで使っていた完全ISO形式(`"...T10:00:00.000Z"`)とは表現が異なるが、型は単なる`string`のため矛盾はない。
+- **S2でこれらの値をスケジューリング(空き時間算出・学習ブロック割当)に使う場合は、この「タイムゾーンなしのローカル時刻文字列」という前提を踏まえて日時比較・ソートロジックを設計し直す必要がある。** 特に日をまたぐ判定やAsia/Tokyo基準の検証(`docs/19`§9)を行う際は、現状のnaiveな文字列比較(`localeCompare`によるソート等)では不十分になる可能性がある。
+- **Discovery Tasksは現時点で科目ごとのグルーピング表示をしていない。** タイトル文字列に科目名が埋め込まれているため実用上は判別できるが、科目数が増えた場合は一覧の可読性が下がる可能性がある。
+- **Studyデータが実運用で蓄積された後は、将来的に部分import(Bodyのみ/Studyのみを選んで復元する機能)が必要になる可能性がある。** 現時点(§14)ではimportは常に全置換であり、Study未対応の旧exportをimportするとStudy系データが空配列に上書きされる。この挙動は現状許容しているが、実運用開始後に問題が顕在化した場合はPhase 4以降で再検討する。
+- **既存E2E(`navigation.spec.ts`)で、下部ナビの短いラベル(「記録」等)とStudy側カードの文言(「...を記録する」等)が部分一致で衝突する事象が実際に発生した。** Playwrightの`getByRole('link', {name})`は既定で部分一致するため、今後Study側に新しい文言を追加する際は、既存の下部ナビラベルとの部分一致衝突がないか確認し、必要に応じて`exact: true`を使う。

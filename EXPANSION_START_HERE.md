@@ -42,3 +42,7 @@
 12. `docs/24_study_planner_foundation_decisions.md`(実装直前に確定した決定事項。解釈に迷ったら最優先で参照する)
 
 Claude Codeへの初回宣言は `prompts/05_expansion_bootstrap_prompt.md` を使用してください。
+
+## 現在地(2026-07-11)
+
+Study Planner S1(Courses / Exams / Materials / Discovery Tasks / Availability)は`feature/study-planner-foundation`ブランチで実装済み、main統合前レビュー中。詳細は`docs/22`E章・`docs/24`§15を参照。

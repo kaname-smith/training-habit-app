@@ -39,16 +39,29 @@
 
 ## E. Study Planner Foundation
 
-- [ ] 科目を登録できる
-- [ ] 試験日・範囲にunknown状態を持てる
-- [ ] 資料不足を記録できる
-- [ ] Discovery Taskを生成できる
-- [ ] 固定予定を手入力できる
+### E1. Milestone S1(Situation Assessment)— 実装済み(2026-07-11、`feature/study-planner-foundation`ブランチ、`docs/24`参照)
+
+- [x] 科目を登録できる(CoursesPage、カスケード削除含む)
+- [x] 試験日・範囲にunknown状態を持てる(ExamsPage、`ConfidenceLevel`)
+- [x] 資料不足を記録できる(MaterialsPage、`MaterialStatus`。`not_applicable`含む)
+- [x] Discovery Taskを生成できる(DiscoveryTasksPage、画面表示時に自動生成、冪等)
+- [x] 固定予定を手入力できる(AvailabilityPage、単発ブロックのみ)
+- [x] Courses UI 実装済み
+- [x] Exams UI 実装済み
+- [x] Materials UI 実装済み
+- [x] Discovery Tasks UI 実装済み
+- [x] Availability UI 実装済み
+- [x] Study S1 Golden Path E2E 実装済み(`e2e/study-s1-golden-path.spec.ts`)
+- [x] `typecheck` / `lint` / `test` / `build` / `e2e` 成功済み(featureブランチ上で確認済み。main統合時に再確認する)
+- [ ] スマホ実機確認(main統合・GitHub Pages再公開前にはまだ未実施)
+
+### E2. Milestone S2(Planning and Execution)— 未実装
+
 - [ ] 固定予定と重ならない学習ブロックを生成できる
 - [ ] 優先理由を表示できる
 - [ ] 実績後に未来分を再計画できる
 - [ ] 計画は5〜15分粒度、実績タイマーは秒精度
-- [ ] Google Calendarなしでも利用できる
+- [ ] Google Calendarなしでも利用できる(S1のAvailabilityPageは対応済みだが、S2の空き時間算出・学習ブロック割当は未実装)
 
 ## F. Quality Gates
 
