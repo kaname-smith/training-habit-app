@@ -16,6 +16,7 @@
 - `docs/21_branch_repository_strategy.md`
 - `docs/22_acceptance_criteria_expansion.md`
 - `docs/23_references_and_evidence.md`
+- `docs/24_study_planner_foundation_decisions.md`
 
 まだコード変更はしないでください。
 

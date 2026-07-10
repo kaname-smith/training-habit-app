@@ -149,3 +149,10 @@ BodyとStudyで共有：
 - Google Calendarへの書き込み
 - AIが試験範囲を断定
 - 数学的最適性を保証するスケジューラー
+
+## 11. Foundation実装の確定事項(2026-07-11)
+
+実装直前のレビューにより、本ドキュメントの内容は次の点で具体化された。詳細は`docs/24_study_planner_foundation_decisions.md`を参照。
+
+- §3のモジュール構成は下部タブへの直接追加ではなく、`/study`(Study Overview)配下のカード/上部ナビとして実装する。下部ナビ最終形は「今日 / Body / Study / 記録 / 設定」。
+- 本仕様全体を、単独で利用価値を持つ2段階(Milestone S1: Situation Assessment / Milestone S2: Planning and Execution)に分割して実装する。

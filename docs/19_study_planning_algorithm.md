@@ -136,3 +136,10 @@ interface AvailabilityBlock {
 - Monte Carloによる所要時間不確実性
 
 初期版では複雑な最適化ライブラリを導入しない。
+
+## 11. Milestone S1/S2との対応(2026-07-11確定)
+
+実装を2段階に分割した(詳細は`docs/24_study_planner_foundation_decisions.md`)。本ドキュメントの各段階は次のように対応する。
+
+- Milestone S1(Situation Assessment): §3 Input Audit → Unknown detection → Discovery task generationまで。
+- Milestone S2(Planning and Execution): §4 Workload estimation以降(優先度スコア、Availability構築、Time-block allocation、Daily execution、Actual-time feedback、Replanning)。

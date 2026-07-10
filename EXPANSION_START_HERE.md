@@ -39,5 +39,6 @@
 9. `docs/21_branch_repository_strategy.md`
 10. `docs/22_acceptance_criteria_expansion.md`
 11. `docs/23_references_and_evidence.md`
+12. `docs/24_study_planner_foundation_decisions.md`(実装直前に確定した決定事項。解釈に迷ったら最優先で参照する)
 
 Claude Codeへの初回宣言は `prompts/05_expansion_bootstrap_prompt.md` を使用してください。

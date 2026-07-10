@@ -81,3 +81,10 @@ const features = {
 ```
 
 ただし、長期間の未使用コードをmainに置くより、完成までbranchで隔離することを優先する。
+
+## 8. Study Planner Foundationの二段階マイルストーン(2026-07-11確定)
+
+`feature/study-planner-foundation`は、単独で利用価値を持つMilestone S1(Situation Assessment)とMilestone S2(Planning and Execution)に分割して実装する。詳細は`docs/24_study_planner_foundation_decisions.md`を参照。
+
+- S1が完成し品質基準(§6の統合方法に加えexport/import後方互換確認)を満たした場合、S2完成前でも`main`への統合候補にできる。ただし実際の統合(merge/push)は、その都度別途承認を得てから行う。
+- 下部ナビゲーション最終形(今日 / Body / Study / 記録 / 設定)への変更とBodyハブ新設は、Training側の作業として先送りせず、Study Planner Foundation(S1)のスコープに含める。
