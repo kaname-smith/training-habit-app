@@ -53,7 +53,8 @@
 - [x] Availability UI 実装済み
 - [x] Study S1 Golden Path E2E 実装済み(`e2e/study-s1-golden-path.spec.ts`)
 - [x] `typecheck` / `lint` / `test` / `build` / `e2e` 成功済み(featureブランチ上で確認済み。main統合時に再確認する)
-- [ ] スマホ実機確認(main統合・GitHub Pages再公開前にはまだ未実施)
+- [x] スマホ実機確認(ローカルLANプレビュー、2026-07-11完了)
+- [ ] スマホ実機確認(GitHub Pages本番URL。main統合・push・再デプロイ後に実施予定)
 
 ### E2. Milestone S2(Planning and Execution)— 未実装
 
