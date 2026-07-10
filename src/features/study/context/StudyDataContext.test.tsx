@@ -77,6 +77,62 @@ describe('StudyDataProvider', () => {
     expect(await studyCoursesRepository.get()).toEqual([]);
   });
 
+  it('removeCourseCascade deletes the course plus its ExamInfo/MaterialItem/StudyTask, but leaves AvailabilityBlock alone', async () => {
+    const { result } = renderStudyData();
+    await waitForLoaded(result);
+
+    const course: Course = { id: 'c1', name: '材料力学' };
+    const otherCourse: Course = { id: 'c2', name: '線形代数' };
+    const examInfo: ExamInfo = { courseId: 'c1', examDateConfidence: 'unknown', scopeConfidence: 'unknown' };
+    const material: MaterialItem = { id: 'm1', courseId: 'c1', kind: 'past_exams', status: 'missing' };
+    const otherMaterial: MaterialItem = { id: 'm2', courseId: 'c2', kind: 'past_exams', status: 'missing' };
+    const task: StudyTask = {
+      id: 'discovery:c1:exam_date_unknown:',
+      courseId: 'c1',
+      title: '材料力学の試験日を確認する',
+      taskType: 'discovery',
+      estimatedMinutes: 15,
+      remainingMinutes: 15,
+      prerequisiteTaskIds: [],
+      importance: 5,
+      uncertainty: 5,
+      status: 'ready',
+    };
+    const block: AvailabilityBlock = {
+      id: 'b1',
+      label: '材料力学の講義',
+      start: '2026-07-13T10:00:00.000Z',
+      end: '2026-07-13T11:30:00.000Z',
+      source: 'manual',
+    };
+
+    await act(async () => {
+      await result.current.addCourse(course);
+      await result.current.addCourse(otherCourse);
+      await result.current.upsertExamInfo(examInfo);
+      await result.current.addMaterial(material);
+      await result.current.addMaterial(otherMaterial);
+      await result.current.addStudyTask(task);
+      await result.current.addAvailabilityBlock(block);
+    });
+
+    await act(async () => {
+      await result.current.removeCourseCascade('c1');
+    });
+
+    expect(result.current.courses).toEqual([otherCourse]);
+    expect(result.current.examInfos).toEqual([]);
+    expect(result.current.materials).toEqual([otherMaterial]);
+    expect(result.current.studyTasks).toEqual([]);
+    expect(result.current.availabilityBlocks).toEqual([block]);
+
+    expect(await studyCoursesRepository.get()).toEqual([otherCourse]);
+    expect(await studyExamInfosRepository.get()).toEqual([]);
+    expect(await studyMaterialsRepository.get()).toEqual([otherMaterial]);
+    expect(await studyTasksRepository.get()).toEqual([]);
+    expect(await studyAvailabilityBlocksRepository.get()).toEqual([block]);
+  });
+
   it('upserts and removes an ExamInfo keyed by courseId', async () => {
     const { result } = renderStudyData();
     await waitForLoaded(result);

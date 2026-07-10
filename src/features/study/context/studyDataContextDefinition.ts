@@ -20,6 +20,10 @@ export interface StudyDataContextValue {
   addCourse: (course: Course) => Promise<void>;
   updateCourse: (id: string, updater: (course: Course) => Course) => Promise<void>;
   removeCourse: (id: string) => Promise<void>;
+  // Removes the course plus every ExamInfo/MaterialItem/StudyTask tied to
+  // its courseId. AvailabilityBlock is intentionally left untouched — it
+  // isn't required to reference a course.
+  removeCourseCascade: (courseId: string) => Promise<void>;
 
   // ExamInfo has no id of its own (docs/18): it is keyed 1:1 by courseId,
   // so add/update collapse into a single upsert-by-courseId operation.

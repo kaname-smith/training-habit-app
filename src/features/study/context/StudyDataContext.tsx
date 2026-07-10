@@ -83,6 +83,25 @@ export function StudyDataProvider({ children }: { children: ReactNode }) {
     await studyCoursesRepository.set(next);
   }
 
+  async function removeCourseCascade(courseId: string) {
+    const nextCourses = courses.filter((course) => course.id !== courseId);
+    const nextExamInfos = examInfos.filter((info) => info.courseId !== courseId);
+    const nextMaterials = materials.filter((material) => material.courseId !== courseId);
+    const nextStudyTasks = studyTasks.filter((task) => task.courseId !== courseId);
+
+    setCourses(nextCourses);
+    setExamInfos(nextExamInfos);
+    setMaterials(nextMaterials);
+    setStudyTasks(nextStudyTasks);
+
+    await Promise.all([
+      studyCoursesRepository.set(nextCourses),
+      studyExamInfosRepository.set(nextExamInfos),
+      studyMaterialsRepository.set(nextMaterials),
+      studyTasksRepository.set(nextStudyTasks),
+    ]);
+  }
+
   async function upsertExamInfo(examInfo: ExamInfo) {
     const next = [...examInfos.filter((info) => info.courseId !== examInfo.courseId), examInfo];
     setExamInfos(next);
@@ -174,6 +193,7 @@ export function StudyDataProvider({ children }: { children: ReactNode }) {
     addCourse,
     updateCourse,
     removeCourse,
+    removeCourseCascade,
     upsertExamInfo,
     removeExamInfo,
     addMaterial,
