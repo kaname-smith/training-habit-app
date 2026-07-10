@@ -3,7 +3,9 @@ import type { MissingInfoFlag } from './confidenceAudit';
 
 const DISCOVERY_TASK_ESTIMATED_MINUTES = 15;
 
-const MATERIAL_LABELS: Record<MaterialKind, string> = {
+// Exported so UI (e.g. the Materials checklist) uses the same Japanese
+// labels as Discovery Task titles, rather than a second copy drifting apart.
+export const MATERIAL_KIND_LABELS: Record<MaterialKind, string> = {
   syllabus: 'シラバス',
   lecture_slides: '講義スライド',
   textbook_scope: '教科書の範囲',
@@ -24,7 +26,7 @@ function describeFlag(courseName: string, flag: MissingInfoFlag): string {
     case 'exam_format_unknown':
       return `${courseName}の試験形式を確認する`;
     case 'material_missing':
-      return `${courseName}の${MATERIAL_LABELS[flag.materialKind ?? 'other']}を確認する`;
+      return `${courseName}の${MATERIAL_KIND_LABELS[flag.materialKind ?? 'other']}を確認する`;
     case 'mastery_unknown':
       return `${courseName}の現在の理解度を自己評価する`;
     default: {

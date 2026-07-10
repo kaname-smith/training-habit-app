@@ -17,8 +17,9 @@ export interface MissingInfoFlag {
 
 // Kinds checked by default even before any MaterialItem row exists for the
 // course. 'peer_or_instructor_confirmation' and 'other' are opt-in additions
-// a user can log, not part of the baseline checklist.
-const REQUIRED_MATERIAL_KINDS: MaterialKind[] = [
+// a user can log, not part of the baseline checklist. Exported so the
+// Materials checklist UI renders exactly the kinds this audit checks.
+export const REQUIRED_MATERIAL_KINDS: MaterialKind[] = [
   'syllabus',
   'lecture_slides',
   'textbook_scope',
