@@ -3,6 +3,27 @@ import { STORAGE_KEYS, CURRENT_SCHEMA_VERSION } from './migrations';
 import type { UserProfile, FatigueCheckIn, ExperienceLevel, SleepLevel, FatigueLevel } from '../domain/habitTypes';
 import type { DailyPlan, WorkoutLog, WorkoutType, PerceivedEffort } from '../domain/workoutTypes';
 import type { NutritionLog } from '../domain/nutritionTypes';
+import type {
+  Course,
+  ConfidenceLevel,
+  ExamFormat,
+  ExamInfo,
+  MaterialItem,
+  MaterialKind,
+  MaterialStatus,
+  StudyTask,
+  StudyTaskType,
+  StudyTaskStatus,
+  AvailabilityBlock,
+  AvailabilityBlockSource,
+} from '../domain/study/studyTypes';
+import {
+  studyCoursesRepository,
+  studyExamInfosRepository,
+  studyMaterialsRepository,
+  studyTasksRepository,
+  studyAvailabilityBlocksRepository,
+} from './studyRepositories';
 
 export const userProfileRepository = {
   get: () => storageClient.get<UserProfile>(STORAGE_KEYS.userProfile),
@@ -54,14 +75,34 @@ export interface DataExport {
   workoutLogs: WorkoutLog[];
   nutritionLogs: NutritionLog[];
   fatigueCheckIns: FatigueCheckIn[];
+  studyCourses: Course[];
+  studyExamInfos: ExamInfo[];
+  studyMaterials: MaterialItem[];
+  studyTasks: StudyTask[];
+  studyAvailabilityBlocks: AvailabilityBlock[];
 }
 
 export async function exportAllData(): Promise<DataExport> {
-  const [profile, workoutLogs, nutritionLogs, fatigueCheckIns] = await Promise.all([
+  const [
+    profile,
+    workoutLogs,
+    nutritionLogs,
+    fatigueCheckIns,
+    studyCourses,
+    studyExamInfos,
+    studyMaterials,
+    studyTasks,
+    studyAvailabilityBlocks,
+  ] = await Promise.all([
     userProfileRepository.get(),
     workoutLogsRepository.get(),
     nutritionLogsRepository.get(),
     fatigueCheckInsRepository.get(),
+    studyCoursesRepository.get(),
+    studyExamInfosRepository.get(),
+    studyMaterialsRepository.get(),
+    studyTasksRepository.get(),
+    studyAvailabilityBlocksRepository.get(),
   ]);
 
   return {
@@ -71,6 +112,11 @@ export async function exportAllData(): Promise<DataExport> {
     workoutLogs,
     nutritionLogs,
     fatigueCheckIns,
+    studyCourses,
+    studyExamInfos,
+    studyMaterials,
+    studyTasks,
+    studyAvailabilityBlocks,
   };
 }
 
@@ -79,6 +125,28 @@ const SLEEP_LEVELS: SleepLevel[] = ['enough', 'low', 'very_low'];
 const FATIGUE_LEVELS: FatigueLevel[] = ['light', 'normal', 'heavy'];
 const WORKOUT_TYPES: WorkoutType[] = ['intro', 'A', 'B', 'short', 'rest', 'walk'];
 const PERCEIVED_EFFORTS: PerceivedEffort[] = ['easy', 'good', 'hard', 'too_hard'];
+const CONFIDENCE_LEVELS: ConfidenceLevel[] = ['unknown', 'low', 'medium', 'confirmed'];
+const EXAM_FORMATS: ExamFormat[] = ['written', 'oral', 'report', 'unknown'];
+const MATERIAL_KINDS: MaterialKind[] = [
+  'syllabus',
+  'lecture_slides',
+  'textbook_scope',
+  'assignments',
+  'past_exams',
+  'peer_or_instructor_confirmation',
+  'other',
+];
+const MATERIAL_STATUSES: MaterialStatus[] = ['missing', 'partial', 'complete', 'not_applicable'];
+const STUDY_TASK_TYPES: StudyTaskType[] = ['discovery', 'learning', 'practice', 'review', 'administrative'];
+const STUDY_TASK_STATUSES: StudyTaskStatus[] = [
+  'backlog',
+  'ready',
+  'scheduled',
+  'in_progress',
+  'done',
+  'blocked',
+];
+const AVAILABILITY_BLOCK_SOURCES: AvailabilityBlockSource[] = ['manual', 'calendar', 'recurring_schedule'];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -129,6 +197,56 @@ function isValidFatigueCheckIn(value: unknown): value is FatigueCheckIn {
   );
 }
 
+function isValidCourse(value: unknown): value is Course {
+  if (!isRecord(value)) return false;
+  return typeof value.id === 'string' && typeof value.name === 'string';
+}
+
+function isValidExamInfo(value: unknown): value is ExamInfo {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.courseId === 'string' &&
+    CONFIDENCE_LEVELS.includes(value.examDateConfidence as ConfidenceLevel) &&
+    CONFIDENCE_LEVELS.includes(value.scopeConfidence as ConfidenceLevel) &&
+    (value.format === undefined || EXAM_FORMATS.includes(value.format as ExamFormat))
+  );
+}
+
+function isValidMaterialItem(value: unknown): value is MaterialItem {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.id === 'string' &&
+    typeof value.courseId === 'string' &&
+    MATERIAL_KINDS.includes(value.kind as MaterialKind) &&
+    MATERIAL_STATUSES.includes(value.status as MaterialStatus)
+  );
+}
+
+function isValidStudyTask(value: unknown): value is StudyTask {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.id === 'string' &&
+    typeof value.courseId === 'string' &&
+    typeof value.title === 'string' &&
+    STUDY_TASK_TYPES.includes(value.taskType as StudyTaskType) &&
+    typeof value.estimatedMinutes === 'number' &&
+    typeof value.remainingMinutes === 'number' &&
+    Array.isArray(value.prerequisiteTaskIds) &&
+    STUDY_TASK_STATUSES.includes(value.status as StudyTaskStatus)
+  );
+}
+
+function isValidAvailabilityBlock(value: unknown): value is AvailabilityBlock {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.id === 'string' &&
+    typeof value.label === 'string' &&
+    typeof value.start === 'string' &&
+    typeof value.end === 'string' &&
+    AVAILABILITY_BLOCK_SOURCES.includes(value.source as AvailabilityBlockSource)
+  );
+}
+
 export type DataImportValidation =
   | { ok: true; data: DataExport }
   | { ok: false; reason: string };
@@ -163,6 +281,31 @@ export function validateDataExport(raw: unknown): DataImportValidation {
     return { ok: false, reason: '疲労チェックの記録の形式が正しくありません。' };
   }
 
+  // Study Planner fields are optional on the raw input: exports made before
+  // Study Planner existed have none of these keys at all. Absent means "no
+  // Study data yet" (defaults to []), not an invalid file — this is what
+  // lets a pre-Study export still import successfully.
+  const studyCourses = raw.studyCourses ?? [];
+  if (!Array.isArray(studyCourses) || !studyCourses.every(isValidCourse)) {
+    return { ok: false, reason: 'Studyの科目情報の形式が正しくありません。' };
+  }
+  const studyExamInfos = raw.studyExamInfos ?? [];
+  if (!Array.isArray(studyExamInfos) || !studyExamInfos.every(isValidExamInfo)) {
+    return { ok: false, reason: 'Studyの試験情報の形式が正しくありません。' };
+  }
+  const studyMaterials = raw.studyMaterials ?? [];
+  if (!Array.isArray(studyMaterials) || !studyMaterials.every(isValidMaterialItem)) {
+    return { ok: false, reason: 'Studyの資料情報の形式が正しくありません。' };
+  }
+  const studyTasks = raw.studyTasks ?? [];
+  if (!Array.isArray(studyTasks) || !studyTasks.every(isValidStudyTask)) {
+    return { ok: false, reason: 'Studyの学習タスクの形式が正しくありません。' };
+  }
+  const studyAvailabilityBlocks = raw.studyAvailabilityBlocks ?? [];
+  if (!Array.isArray(studyAvailabilityBlocks) || !studyAvailabilityBlocks.every(isValidAvailabilityBlock)) {
+    return { ok: false, reason: 'Studyの固定予定の形式が正しくありません。' };
+  }
+
   return {
     ok: true,
     data: {
@@ -172,6 +315,11 @@ export function validateDataExport(raw: unknown): DataImportValidation {
       workoutLogs: raw.workoutLogs,
       nutritionLogs: raw.nutritionLogs,
       fatigueCheckIns: raw.fatigueCheckIns,
+      studyCourses,
+      studyExamInfos,
+      studyMaterials,
+      studyTasks,
+      studyAvailabilityBlocks,
     },
   };
 }
@@ -194,6 +342,11 @@ export async function importAllData(raw: unknown): Promise<DataImportResult> {
     workoutLogsRepository.set(data.workoutLogs),
     nutritionLogsRepository.set(data.nutritionLogs),
     fatigueCheckInsRepository.set(data.fatigueCheckIns),
+    studyCoursesRepository.set(data.studyCourses),
+    studyExamInfosRepository.set(data.studyExamInfos),
+    studyMaterialsRepository.set(data.studyMaterials),
+    studyTasksRepository.set(data.studyTasks),
+    studyAvailabilityBlocksRepository.set(data.studyAvailabilityBlocks),
   ]);
 
   return { ok: true };
@@ -207,5 +360,10 @@ export async function resetAllData(): Promise<void> {
     storageClient.remove(STORAGE_KEYS.nutritionLogs),
     storageClient.remove(STORAGE_KEYS.fatigueCheckIns),
     storageClient.remove(STORAGE_KEYS.settings),
+    storageClient.remove(STORAGE_KEYS.studyCourses),
+    storageClient.remove(STORAGE_KEYS.studyExamInfos),
+    storageClient.remove(STORAGE_KEYS.studyMaterials),
+    storageClient.remove(STORAGE_KEYS.studyTasks),
+    storageClient.remove(STORAGE_KEYS.studyAvailabilityBlocks),
   ]);
 }
