@@ -26,8 +26,9 @@ test('bottom nav reaches Body/Study/records/settings, and the Body hub reaches W
 
   await page.getByRole('link', { name: /^科目/ }).click();
   await expect(page).toHaveURL(/\/study\/courses/);
+  await expect(page.getByText('科目を追加')).toBeVisible();
 
-  await page.getByRole('link', { name: '記録' }).click();
+  await page.getByRole('link', { name: '記録', exact: true }).click();
   await expect(page).toHaveURL(/\/records/);
   await expect(page.getByText('総実施回数', { exact: false })).toBeVisible();
 
