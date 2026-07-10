@@ -38,7 +38,12 @@ export type MaterialKind =
   | 'peer_or_instructor_confirmation'
   | 'other';
 
-export type MaterialStatus = 'missing' | 'partial' | 'complete';
+/**
+ * 'not_applicable' means the material kind was confirmed to not exist or not
+ * be needed for this course (e.g. no past exams are available) — distinct
+ * from 'missing', which still needs to be resolved by a Discovery Task.
+ */
+export type MaterialStatus = 'missing' | 'partial' | 'complete' | 'not_applicable';
 
 export interface MaterialItem {
   id: string;
@@ -77,6 +82,13 @@ export interface StudyTask {
 export type AvailabilityBlockSource = 'manual' | 'calendar' | 'recurring_schedule';
 export type EnergyLevel = 'low' | 'medium' | 'high';
 
+/**
+ * Represents one already-expanded, concrete time interval (a single class
+ * session, a single exam, etc.), not a recurrence rule. S1 does not model
+ * weekly/repeating schedules — a recurring class is entered as one
+ * AvailabilityBlock per occurrence. Recurrence representation is deferred
+ * until an Availability input UI actually needs it.
+ */
 export interface AvailabilityBlock {
   id: string;
   label: string;

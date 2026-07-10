@@ -51,7 +51,11 @@ export function auditCourse({ course, examInfo, materials }: AuditCourseInput): 
 
   const statusByKind = new Map(materials.map((item) => [item.kind, item.status]));
   for (const kind of REQUIRED_MATERIAL_KINDS) {
-    if (statusByKind.get(kind) !== 'complete') {
+    const status = statusByKind.get(kind);
+    // 'complete' and 'not_applicable' are both resolved states — only
+    // 'missing'/'partial' (or no MaterialItem row at all) still need a
+    // Discovery Task.
+    if (status !== 'complete' && status !== 'not_applicable') {
       flags.push({ courseId: course.id, reason: 'material_missing', materialKind: kind });
     }
   }

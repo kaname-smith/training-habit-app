@@ -83,6 +83,45 @@ describe('auditCourse', () => {
     expect(flags.some((flag) => flag.reason === 'material_missing')).toBe(false);
   });
 
+  it('does not flag a material kind confirmed as not_applicable', () => {
+    const materials: MaterialItem[] = completeMaterials.map((item) =>
+      item.kind === 'past_exams' ? { ...item, status: 'not_applicable' } : item,
+    );
+    const flags = auditCourse({ course: { ...course, currentMastery: 3 }, examInfo: confirmedExamInfo, materials });
+    expect(flags.some((flag) => flag.reason === 'material_missing')).toBe(false);
+  });
+
+  it('still flags a material kind whose status is only partial', () => {
+    const materials: MaterialItem[] = completeMaterials.map((item) =>
+      item.kind === 'lecture_slides' ? { ...item, status: 'partial' } : item,
+    );
+    const flags = auditCourse({ course: { ...course, currentMastery: 3 }, examInfo: confirmedExamInfo, materials });
+    expect(flags).toContainEqual({
+      courseId: 'course-1',
+      reason: 'material_missing',
+      materialKind: 'lecture_slides',
+    });
+  });
+
+  it('treats complete and not_applicable as equally resolved', () => {
+    const allNotApplicable: MaterialItem[] = completeMaterials.map((item) => ({
+      ...item,
+      status: 'not_applicable',
+    }));
+    const flagsComplete = auditCourse({
+      course: { ...course, currentMastery: 3 },
+      examInfo: confirmedExamInfo,
+      materials: completeMaterials,
+    });
+    const flagsNotApplicable = auditCourse({
+      course: { ...course, currentMastery: 3 },
+      examInfo: confirmedExamInfo,
+      materials: allNotApplicable,
+    });
+    expect(flagsComplete.filter((flag) => flag.reason === 'material_missing')).toEqual([]);
+    expect(flagsNotApplicable.filter((flag) => flag.reason === 'material_missing')).toEqual([]);
+  });
+
   it('flags mastery_unknown when currentMastery is not set', () => {
     const flags = auditCourse({ course, examInfo: confirmedExamInfo, materials: completeMaterials });
     expect(flags).toContainEqual({ courseId: 'course-1', reason: 'mastery_unknown' });

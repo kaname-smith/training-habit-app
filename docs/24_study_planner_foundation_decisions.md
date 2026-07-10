@@ -219,3 +219,12 @@ npm run e2e
 - `docs/19_study_planning_algorithm.md` — アルゴリズム仕様(§11にS1/S2対応を追記)
 - `docs/21_branch_repository_strategy.md` — ブランチ戦略(§8に本ドキュメントへの参照を追記)
 - `docs/22_acceptance_criteria_expansion.md` — 受け入れ基準(E章がStudy Planner Foundation全体の基準。本ドキュメントのS1/S2分割と合わせて読む)
+
+## 13. MaterialStatusの確定(2026-07-11追記、Phase 0補正)
+
+Phase 0実装時のレビューで、`MaterialItem.status`に`'not_applicable'`(不要・存在しないと確認済み)を追加した。
+
+- `missing` / `partial`: Discovery Task対象(不足扱い)
+- `complete` / `not_applicable`: Discovery Task対象外(解消済み扱い)
+
+`not_applicable`が無いと、過去問等が実際に存在しない科目でDiscovery Taskが永久に残るため。`AvailabilityBlock`は展開済みの単発時間帯のみを表し、S1では繰り返しルールを導入しない(§7参照)。
